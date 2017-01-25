@@ -1,0 +1,27 @@
+{
+  "name": "new-bbs",
+  "version": "0.0.1",
+  "description": "a bbs for the next generation",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xzela/new-bbs.git"
+  },
+  "keywords": [
+    "bbs"
+  ],
+  "author": "zelafassett@gmail.com",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/xzela/new-bbs/issues"
+  },
+  "homepage": "https://github.com/xzela/new-bbs#readme",
+  "dependencies": {
+    "express": "^4.14.0",
+    "is_js": "^0.9.0",
+    "socket.io": "^1.7.2"
+  }
+}

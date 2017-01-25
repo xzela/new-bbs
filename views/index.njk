@@ -8,7 +8,7 @@
 			var socket = io();
 			$(document).ready(function () {
 				
-				socket.emit('status:init', true);
+				socket.emit('status:init',  {sessionId: "{{ sessionId }}" });
 				
 				socket.on('status:check', function (status) {
 					$("#status").text(status);

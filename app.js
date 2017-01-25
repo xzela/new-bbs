@@ -1,18 +1,42 @@
 'use strict';
 
 const app = require('express')(),
+	cookieParser = require('cookie-parser'),
+	session = require('express-session'),
 	http = require('http').Server(app),
 	io = require('socket.io')(http),
-	is = require('is_js');
+	is = require('is_js'),
+	nunjucks = require('nunjucks'),
+	uuid = require('uuid/v4');
 
-let clients = {};
+let clients = {},
+	njk = nunjucks.configure({
+		express: app
+	});
+
+app.set('views', __dirname + 'views');
+app.set('view engine', 'njk');
+
+app.use(session({
+	secret: 'keyboardcat',
+	resave: true,
+	name: 'kiram-kyler',
+	genid: function () {
+		return uuid();
+	},
+	saveUninitialized: true,
+	cookie: { 
+		maxAge: 60 * 60 * 1000
+	}
+}));
+app.use(cookieParser());
 
 app.get('/', function(req, res) {
-	return res.sendFile( __dirname + '/index.html');
+	return res.render('./views/index', {sessionId: req.sessionID});
 });
 
 io.on('connection', function(socket) {
-	
+	console.log('connect', socket.id);
 	if (Object.keys(clients).length <= 0) {
 		clients[socket.id] = {
 			id: socket.id,
@@ -25,26 +49,26 @@ io.on('connection', function(socket) {
 		};
 	}
 	
-	socket.on('status:init', () => {
+	socket.on('status:init', (data) => {
+		console.log('init', data);
+		clients[socket.id].sessionId = data.sessionId;
 		socket.emit('status:check', clients[socket.id].status);
 	});
 		
 	socket.on('disconnect', function() {
-		console.log(clients[socket.id]);
 		// is the socket currently active?
 		if (clients[socket.id].status === 'active') {
 			let ids = Object.keys(clients);
 			
-			let next = ids.find((id) => {
+			let nextId = ids.find((id) => {
 				if (clients[id].status === 'queued') {
 					return true;
 				}
 			});
 			
-			if (is.existy(next)) {
-				console.log(next);
-				clients[next].status = 'active';
-				socket.to(next).emit('status:check', clients[next].status);
+			if (is.existy(nextId)) {
+				clients[nextId].status = 'active';
+				socket.to(nextId).emit('status:check', clients[nextId].status);
 			}
 		}
 		// remove the current socket

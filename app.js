@@ -36,19 +36,6 @@ app.get('/', function(req, res) {
 	return res.render('./views/index', {sessionId: sessionId});
 });
 
-setInterval(function () {
-	// console.log(clients);
-	// console.log('-');
-}, 1000);
-
-function timer(bool) {
-	
-	if (bool) {
-		return clearInterval(t);
-	}
-	return;
-}
-
 function findClientBySessionId(sessionId, clients) {
 	let keys = Object.keys(clients);
 	for (let i = 0; i < keys.length; ++i) {
@@ -137,11 +124,8 @@ io.on('connection', function(socket) {
 					console.log(client.sessionId, 'deleting');
 					delete clients[socket.id];
 				}
-			}, 1000);
+			}, 2000);
 		}
-		// remove the current socket
-		// delete clients[socket.id];
-		// console.log(`socket: ${socket.id} has disconnected`);
 	});
 
 });

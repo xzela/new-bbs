@@ -1,0 +1,26 @@
+{
+  "name": "new-bbs",
+  "description": "a bbs for the next generation",
+  "main": "app.js",
+  "authors": [
+    "zelafassett@gmail.com"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "bbs"
+  ],
+  "homepage": "https://github.com/xzela/new-bbs",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "cwd": "./",
+  "directory": "./public/vendor",
+  "dependencies": {
+    "jquery": "^3.1.1"
+  }
+}

@@ -1,15 +1,14 @@
 'use strict';
 
 const app = require('express')(),
-	cookieParser = require('cookie-parser'),
-	session = require('express-session'),
 	http = require('http').Server(app),
-	io = require('socket.io')(http),
-	is = require('is_js'),
-	Client = require('./lib/io-client'),
-	serveStatic = require('serve-static'),
-	nunjucks = require('nunjucks'),
-	uuid = require('uuid/v4');
+	io = require('socket.io')(http);
+
+const is = require('is_js'),
+	nunjucks = require('nunjucks');
+
+const Client = require('./lib/io-client'),
+	middleware = require('./lib/utils/middleware');
 
 let clients = {},
 	t;
@@ -18,22 +17,10 @@ nunjucks.configure({express: app});
 
 app.set('views', __dirname + 'views');
 app.set('view engine', 'njk');
-app.use(serveStatic(__dirname + '/public'));
-app.use(session({
-	secret: 'keyboardcat',
-	resave: true,
-	name: 'kiram-kyler',
-	genid: function () {
-		return uuid();
-	},
-	saveUninitialized: true,
-	cookie: {
-		maxAge: 60 * 60 * 1000
-	}
-}));
-app.use(cookieParser());
+app.use(middleware.initStaticServe(__dirname + '/public'));
+app.use(middleware.initSession());
+app.use(middleware.initCookieParser());
 
-app.statuc
 app.get('/', function(req, res) {
 	let sessionId = req.sessionID;
 	return res.render('./views/index', {sessionId: sessionId});

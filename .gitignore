@@ -25,7 +25,7 @@ build/Release
 node_modules
 
 # bower
-public/vender
+public/vendor
 
 # Junk
 out

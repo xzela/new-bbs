@@ -40,7 +40,7 @@ function findClientBySessionId(sessionId, clients) {
 
 setInterval(function () {
 	console.log(clients);
-}, 5000)
+}, 5000);
 
 io.on('connection', function(socket) {
 	// 1. When a client connects for the first time, see if their session already

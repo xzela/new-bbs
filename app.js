@@ -6,6 +6,8 @@ const app = require('express')(),
 	http = require('http').Server(app),
 	io = require('socket.io')(http),
 	is = require('is_js'),
+	Client = require('./lib/io-client'),
+	serveStatic = require('serve-static'),
 	nunjucks = require('nunjucks'),
 	uuid = require('uuid/v4');
 
@@ -16,7 +18,7 @@ nunjucks.configure({express: app});
 
 app.set('views', __dirname + 'views');
 app.set('view engine', 'njk');
-
+app.use(serveStatic(__dirname + '/public'));
 app.use(session({
 	secret: 'keyboardcat',
 	resave: true,
@@ -25,12 +27,13 @@ app.use(session({
 		return uuid();
 	},
 	saveUninitialized: true,
-	cookie: { 
+	cookie: {
 		maxAge: 60 * 60 * 1000
 	}
 }));
 app.use(cookieParser());
 
+app.statuc
 app.get('/', function(req, res) {
 	let sessionId = req.sessionID;
 	return res.render('./views/index', {sessionId: sessionId});
@@ -48,21 +51,25 @@ function findClientBySessionId(sessionId, clients) {
 	return;
 }
 
+setInterval(function () {
+	console.log(clients);
+}, 5000)
+
 io.on('connection', function(socket) {
 	// 1. When a client connects for the first time, see if their session already
-	// exists. 
-		
-	// console.log('connect', socket.id);	
+	// exists.
+
+	// console.log('connect', socket.id);
 	socket.on('status:init', (data) => {
 		// no one has connected yet
 		let keys = Object.keys(clients);
 		if (keys.length <= 0) {
-			clients[socket.id] = {
+			clients[socket.id] = new Client({
 				id: socket.id,
 				sessionId: data.sessionId,
 				prune: false,
 				status: 'active'
-			};
+			});
 			return socket.emit('status:check', clients[socket.id].status);
 		}
 		let client = findClientBySessionId(data.sessionId, clients);
@@ -70,40 +77,38 @@ io.on('connection', function(socket) {
 		if (is.existy(client)) {
 			console.log(`${client.sessionId} still ${client.status}`);
 			// console.log(client.sessionId, 'still active');
-			clients[socket.id] = {
+			clients[socket.id] = new Client({
 				id: socket.id,
 				sessionId: data.sessionId,
 				prune: false,
 				status: client.status
-			};
+			});
 			delete clients[client.id];
 			clearTimeout(t);
 			return socket.emit('status:check', clients[socket.id].status);
 		}
 		console.log(data.sessionId, 'queued');
-		// test to see if the client has already connected 
+		// test to see if the client has already connected
 		// we want to preserve their state
 
-		clients[socket.id] = {
+		clients[socket.id] = new Client({
 			id: socket.id,
 			sessionId: data.sessionId,
 			status: 'queued'
-		};
+		});
 
 		// clients[socket.id].sessionId = data.sessionId;
 		return socket.emit('status:check', clients[socket.id].status);
 	});
-		
+
 	socket.on('disconnect', function() {
-		// the client may have disconnected but, we want to wait to see if they 
-		// come back. 
-		
-		
+		// the client may have disconnected but, we want to wait to see if they
+		// come back.
 		// is the socket currently active?
 		if (is.existy(clients[socket.id]) && clients[socket.id].status === 'active') {
 			let client = clients[socket.id];
 			client.prune = true;
-			// if the active client disconnected, wait 5 seconds to see if they 
+			// if the active client disconnected, wait 5 seconds to see if they
 			// come back before making the next client active
 			console.log(client.sessionId, 'checking');
 			t = setTimeout(function () {
@@ -115,7 +120,7 @@ io.on('connection', function(socket) {
 							return true;
 						}
 					});
-					
+
 					if (is.existy(nextId)) {
 						console.log(clients[nextId].sessionId, 'is becoming active?');
 						clients[nextId].status = 'active';

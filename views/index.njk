@@ -15,22 +15,61 @@
 				});
 			});
 		</script>
+
 		<style>
 			* { margin: 0; padding: 0; box-sizing: border-box; }
-			body { font: 13px Helvetica, Arial; }
-			form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
-			form input { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
-			form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
-			#messages { list-style-type: none; margin: 0; padding: 0; }
-			#messages li { padding: 5px 10px; }
-			#messages li:nth-child(odd) { background: #eee; }
+			body { font: 16px Helvetica, Arial; }
+			#login-wrapper {
+				width: 500px;
+				margin: 0 auto;
+			}
+
+			#login-form {
+
+			}
+
+			#login-form h2 {
+				margin: 5px;
+			}
+			#login-form fieldset {
+				padding: 20px;
+
+			}
+			#login-form fieldset label {
+				float: left;
+				text-align: right;
+				width: 100%;
+				margin-right: 20px;
+				/*display: block;*/
+				/*text-align: left;*/
+			}
+			#login-form fieldset input {
+				width: 100%;
+				line-height: 1em;
+				font-size: 2em;
+				padding: .5em;
+			}
 		</style>
 	</head>
 	<body>
 		<h2 id="status"></h2>
-		<ul id="messages"></ul>
-		<form action="">
-			<input id="m" autocomplete="off" /><button>Send</button>
-		</form>
+		<div id="login-wrapper">
+			<div id="login-form">
+				<h2>Sign Up</h2>
+				<form>
+					<fieldset>
+						<input type="telephone" placeholder="888 555 1234" />
+						<label>Phone Number:</label>
+
+					</fieldset>
+					<fieldset>
+						<input type="password" />
+						<label>Password:</label>
+
+					</fieldset>
+				</form>
+
+			</div>
+		</div>
 	</body>
 </html>

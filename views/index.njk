@@ -18,9 +18,15 @@
 
 		<style>
 			* { margin: 0; padding: 0; box-sizing: border-box; }
-			body { font: 16px Helvetica, Arial; }
+			body {
+				/*background-color: #ddf4f7;*/
+				color: #0f304e;
+				/*color: #006494;*/
+				background-color: #E8F1F2;
+				font: 16px Helvetica, Arial;
+			}
 			#login-wrapper {
-				width: 500px;
+				width: 650px;
 				margin: 0 auto;
 			}
 
@@ -29,25 +35,69 @@
 			}
 
 			#login-form h2 {
-				margin: 5px;
+				color: #13293D;
+				font-size: 2em;
+				margin: 10px;
+				padding: 10px;
+				text-align: center;
 			}
-			#login-form fieldset {
-				padding: 20px;
 
+			#login-form fieldset {
+				margin: 10px;
+				border: 0;
+				position: relative;
 			}
-			#login-form fieldset label {
+
+			#login-form fieldset .input-label {
+				position: absolute;
 				float: left;
+				height: 100%;
+				width: 30%;
+
+				/*border: 1px solid red;*/
+				line-height: 2em;
+				font-size: 2em;
+				padding-right: 10px;
+
 				text-align: right;
-				width: 100%;
-				margin-right: 20px;
-				/*display: block;*/
-				/*text-align: left;*/
 			}
-			#login-form fieldset input {
+
+			#login-form fieldset .input-field {
+				/*border: 1px solid blue;*/
+				padding: 1px;
+				float: right;
+				width: 70%;
+			}
+
+			#login-form fieldset .input-field input {
+				/*background-color: #E8F1F2;*/
+				color: #006494;
+				border: 0;
+				border-radius: 10px;
 				width: 100%;
 				line-height: 1em;
 				font-size: 2em;
 				padding: .5em;
+			}
+
+			#login-form fieldset .input-button input {
+				background-color: #006494;
+				color: #FFFFFF;
+				border: 0;
+				border-radius: 10px;
+				width: 100%;
+				line-height: 1em;
+				font-size: 2em;
+				padding: .5em;
+			}
+			#login-form fieldset .input-button input:hover {
+				background-color: #0384c1;
+				color: #E1E1E1;
+				cursor: pointer;
+	 		}
+
+			#login-form fieldset .input-button input:active {
+				color: red;
 			}
 		</style>
 	</head>
@@ -58,15 +108,26 @@
 				<h2>Sign Up</h2>
 				<form>
 					<fieldset>
-						<input type="telephone" placeholder="888 555 1234" />
-						<label>Phone Number:</label>
-
+						<div class="input-label">
+							phone:
+						</div>
+						<div class="input-field">
+							<input name="[hone]" type="telephone" placeholder="888 555 1234" maxlength="12" />
+						</div>
 					</fieldset>
 					<fieldset>
-						<input type="password" />
-						<label>Password:</label>
-
+						<div class="input-label">
+							passphrase:
+						</div>
+						<div class="input-field">
+							<input name="password" type="password" />
+						</div>
 					</fieldset>
+					<fieldset>
+						<div class="input-button">
+							<input type="button" value="submit" />
+						</div>
+					</fieldset
 				</form>
 
 			</div>

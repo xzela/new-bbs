@@ -39,7 +39,7 @@ function findClientBySessionId(sessionId, clients) {
 }
 
 setInterval(function () {
-	console.log(clients);
+	// console.log(clients);
 }, 5000);
 
 io.on('connection', function(socket) {

@@ -4,132 +4,114 @@
 		<title>BBS</title>
 		<script src="/socket.io/socket.io.js"></script>
 		<script src="/vendor/jquery/dist/jquery.min.js"></script>
+		<!-- Bootstrap -->
+		<script src="/vendor/bootflat/js/bootstrap.min.js"></script>
+
+		<!-- Bootflat's JS files.-->
+		<script src="/vendor/bootflat/js/jquery.icheck.js"></script>
+		{# <script src="https://bootflat.github.io/bootflat/js/jquery.fs.selecter.min.js"></script> #}
+		{# <script src="https://bootflat.github.io/bootflat/js/jquery.fs.stepper.min.js"></script> #}
+
+		<link rel="stylesheet" href="/vendor/normalize-css/normalize.css">
+		<link rel="stylesheet" href="/vendor/bootflat/bootstrap/bootstrap.min.css">
+		<link rel="stylesheet" href="/vendor/bootflat/css/bootflat.css">
+		<link rel="stylesheet" href="/vendor/bootflat/css/font-awesome.min.css">
+
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+
 		<script>
+			var active = [], queued = [];
 			var socket = io();
 			$(document).ready(function () {
 
 				socket.emit('status:init',  {sessionId: "{{ sessionId }}" });
 
-				socket.on('status:check', function (status) {
-					$("#status").text(status);
+				socket.on('status:check', function (msg) {
+					var label = $("#io-status");
+					label.text(msg.status + ' ' + msg.id);
+					if (msg.status === 'active') {
+						label.removeClass('label-danger').addClass('label-warning');
+						return;
+					}
+					label.removeClass('label-warning').addClass('label-danger');
+					return;
+				});
+				socket.on('list:check', function (items) {
+
+					for (i in items) {
+
+						var client = items[i];
+						console.log(client);
+						if (client.status === 'active' && !active.includes[client.id]) {
+							var activeList = $('#io-active');
+							active.push(client.id);
+							var a = $('<li>').addClass('list-group-item').append(client.id)
+							activeList.append(a);
+						}
+
+						if (client.status === 'queued' && !queued.includes(client.id)) {
+							var queuedList = $('#io-queued');
+							queued.push(client.id);
+							var q = $('<li>').addClass('list-group-item').append(client.id)
+							queuedList.append(q);
+						}
+
+					}
 				});
 			});
 		</script>
 
 		<style>
-			* { margin: 0; padding: 0; box-sizing: border-box; }
+			*{
+				margin: 0; padding: 0; box-sizing: border-box;
+			}
 			body {
-				/*background-color: #ddf4f7;*/
 				color: #0f304e;
-				/*color: #006494;*/
-				background-color: #E8F1F2;
+				background-color: #FFF;
 				font: 16px Helvetica, Arial;
-			}
-			#login-wrapper {
-				width: 650px;
-				margin: 0 auto;
-			}
-
-			#login-form {
-
-			}
-
-			#login-form h2 {
-				color: #13293D;
-				font-size: 2em;
-				margin: 10px;
-				padding: 10px;
-				text-align: center;
-			}
-
-			#login-form fieldset {
-				margin: 10px;
-				border: 0;
-				position: relative;
-			}
-
-			#login-form fieldset .input-label {
-				position: absolute;
-				float: left;
-				height: 100%;
-				width: 30%;
-
-				/*border: 1px solid red;*/
-				line-height: 2em;
-				font-size: 2em;
-				padding-right: 10px;
-
-				text-align: right;
-			}
-
-			#login-form fieldset .input-field {
-				/*border: 1px solid blue;*/
-				padding: 1px;
-				float: right;
-				width: 70%;
-			}
-
-			#login-form fieldset .input-field input {
-				/*background-color: #E8F1F2;*/
-				color: #006494;
-				border: 0;
-				border-radius: 10px;
-				width: 100%;
-				line-height: 1em;
-				font-size: 2em;
-				padding: .5em;
-			}
-
-			#login-form fieldset .input-button input {
-				background-color: #006494;
-				color: #FFFFFF;
-				border: 0;
-				border-radius: 10px;
-				width: 100%;
-				line-height: 1em;
-				font-size: 2em;
-				padding: .5em;
-			}
-			#login-form fieldset .input-button input:hover {
-				background-color: #0384c1;
-				color: #E1E1E1;
-				cursor: pointer;
-	 		}
-
-			#login-form fieldset .input-button input:active {
-				color: red;
+				padding-top: 70px;
 			}
 		</style>
 	</head>
 	<body>
-		<h2 id="status"></h2>
-		<div id="login-wrapper">
-			<div id="login-form">
-				<h2>Sign Up</h2>
-				<form>
-					<fieldset>
-						<div class="input-label">
-							phone:
-						</div>
-						<div class="input-field">
-							<input name="[hone]" type="telephone" placeholder="888 555 1234" maxlength="12" />
-						</div>
-					</fieldset>
-					<fieldset>
-						<div class="input-label">
-							passphrase:
-						</div>
-						<div class="input-field">
-							<input name="password" type="password" />
-						</div>
-					</fieldset>
-					<fieldset>
-						<div class="input-button">
-							<input type="button" value="submit" />
-						</div>
-					</fieldset
-				</form>
+		<div class="container-fluid">
+			<nav class="navbar navbar-default navbar-fixed-top">
+				<div class="container-fluid">
+					<div class="navbar-header">
+						<a class="navbar-brand" href="#"><i class="fa fa-tty"></i> BBS</a>
+						<p class="navbar-text">Current Status: <span class="label label-warning" id="io-status"></span></p>
+					</div>
+				</div>
+			</nav>
 
+			<div class="row">
+				<div class="col-md-8">
+					<form class="form-horizontal">
+						<div class="form-group">
+							<label class="col-sm-2" for="phone">phone number:</label>
+							<div class="col-sm-10">
+								<input name="phone" class="form-control" type="telephone" placeholder="888 555 1234" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2" for="password">password:</label>
+							<div class="col-sm-10">
+								<input name="password" class="form-control" type="password" />
+							</div>
+						</div>
+						<div>
+							<button type="submit" class="btn btn-primary">Submit</button>
+						</div>
+					</form>
+				</div>
+				<div class="col-md-4">
+					<ul id="io-active" class="list-group">
+						<li class="list-group-item">Active Client</li>
+					</ul>
+					<ul id="io-queue" class="list-group">
+						<li class="list-group-item">Queued Clients</li>
+					</ul>
+				</div>
 			</div>
 		</div>
 	</body>

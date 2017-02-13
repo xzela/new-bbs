@@ -46,6 +46,11 @@ io.on('connection', function(socket) {
 	// 1. When a client connects for the first time, see if their session already
 	// exists.
 
+	setInterval(function () {
+		// console.log(clients);
+		socket.emit('list:check', clients);
+	}, 5000);
+
 	// console.log('connect', socket.id);
 	socket.on('status:init', (data) => {
 		// no one has connected yet
@@ -57,7 +62,7 @@ io.on('connection', function(socket) {
 				prune: false,
 				status: 'active'
 			});
-			return socket.emit('status:check', clients[socket.id].status);
+			return socket.emit('status:check', {status: clients[socket.id].status, id: socket.id});
 		}
 		let client = findClientBySessionId(data.sessionId, clients);
 
@@ -85,7 +90,7 @@ io.on('connection', function(socket) {
 		});
 
 		// clients[socket.id].sessionId = data.sessionId;
-		return socket.emit('status:check', clients[socket.id].status);
+		return socket.emit('status:check', {status: clients[socket.id].status, id: socket.id});
 	});
 
 	socket.on('disconnect', function() {
@@ -111,7 +116,7 @@ io.on('connection', function(socket) {
 					if (is.existy(nextId)) {
 						console.log(clients[nextId].sessionId, 'is becoming active?');
 						clients[nextId].status = 'active';
-						socket.to(nextId).emit('status:check', clients[nextId].status);
+						socket.to(nextId).emit('status:check', {status: clients[nextId].status, id: nextId});
 					}
 					console.log(client.sessionId, 'deleting');
 					delete clients[socket.id];
